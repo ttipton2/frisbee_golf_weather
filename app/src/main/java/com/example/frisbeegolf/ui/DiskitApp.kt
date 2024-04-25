@@ -14,11 +14,9 @@ import com.example.frisbeegolf.ui.screens.CourseViewModel
 @Composable
 fun DiskitApp() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(state=rememberScrollState())
+        modifier = Modifier.fillMaxSize()
     ) {
-        val courseViewModel: CourseViewModel = viewModel()
+        val courseViewModel: CourseViewModel = viewModel(factory = CourseViewModel.Factory)
         HomeScreen(
             diskitUiState = courseViewModel.diskitUiState
         )
