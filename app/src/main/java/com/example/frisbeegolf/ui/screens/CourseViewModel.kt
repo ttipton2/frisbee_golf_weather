@@ -1,6 +1,5 @@
 package com.example.frisbeegolf.ui.screens
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import com.example.frisbeegolf.data.CourseUiState
 import com.example.frisbeegolf.model.CourseInfo

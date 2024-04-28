@@ -1,11 +1,15 @@
 package com.example.frisbeegolf.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.frisbeegolf.R
 import com.example.frisbeegolf.ui.screens.HomeScreen
-import com.example.frisbeegolf.ui.screens.DiskitViewModel
+import com.example.frisbeegolf.ui.screens.HomeViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -37,12 +41,12 @@ import com.example.frisbeegolf.ui.screens.CourseViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiskitApp(
-    diskitViewModel: DiskitViewModel = viewModel(factory = DiskitViewModel.Factory),
+    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     courseViewModel: CourseViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = DiskitScreen.valueOf(
+    val currScreen = DiskitScreen.valueOf(
         backStackEntry?.destination?.route ?: DiskitScreen.Home.name
     )
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -51,13 +55,13 @@ fun DiskitApp(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DiskitTopAppBar(
-                scrollBehavior = scrollBehavior,
-                currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+                currScreen = currScreen,
+                navUp = { navController.navigateUp() },
+                scrollBehavior = scrollBehavior,
             )
         }
-    ) { innerPadding ->
+    ) { innerPad ->
         val courseUiState by courseViewModel.courseUiState.collectAsState()
 
         Surface(
@@ -66,11 +70,13 @@ fun DiskitApp(
             NavHost(
                 navController = navController,
                 startDestination = DiskitScreen.Home.name,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPad)
             ) {
                 composable(route = DiskitScreen.Home.name) {
                     HomeScreen(
-                        diskitUiState = diskitViewModel.diskitUiState,
+                        uiState = homeViewModel.diskitUiState,
                         onCourseSelection = {
                             courseViewModel.setCourse(it)
                             navController.navigate(DiskitScreen.Course.name) },
@@ -79,7 +85,10 @@ fun DiskitApp(
                 }
 
                 composable(route = DiskitScreen.Course.name) {
-                    CourseScreen(courseUiState)
+                    CourseScreen(
+                        courseUiState,
+                        modifier = Modifier.fillMaxHeight()
+                    )
                 }
             }
         }
@@ -96,9 +105,9 @@ enum class DiskitScreen(@StringRes val title: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiskitTopAppBar(
-    currentScreen: DiskitScreen,
     canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
+    currScreen: DiskitScreen,
+    navUp: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
 ) {
@@ -106,14 +115,14 @@ fun DiskitTopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
             Text(
-                text = stringResource(currentScreen.title),
-                style = MaterialTheme.typography.headlineSmall,
+                text = stringResource(currScreen.title),
+                style = MaterialTheme.typography.headlineMedium,
                 )
             },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+                IconButton(onClick = navUp) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back_button)

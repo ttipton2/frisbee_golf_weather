@@ -22,15 +22,15 @@ import com.example.frisbeegolf.model.CourseInfo
 
 @Composable
 fun HomeScreen(
-    diskitUiState: DiskitUiState,
+    uiState: DiskitUiState,
     onCourseSelection: (CourseInfo) -> Unit = {},
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
-    when (diskitUiState) {
+    when (uiState) {
         is DiskitUiState.Loading -> LoadingScreen(modifier.fillMaxSize())
         is DiskitUiState.Success -> CoursesListScreen(
-            diskitUiState.courses,
+            uiState.courses,
             onCourseSelection = onCourseSelection,
             contentPadding = contentPadding,
             modifier = modifier.fillMaxWidth()
@@ -87,8 +87,8 @@ fun CourseInfoSummary(
 fun CoursesListScreen(
     courses: List<CourseInfo>,
     onCourseSelection: (CourseInfo) -> Unit = {},
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         contentPadding = contentPadding,

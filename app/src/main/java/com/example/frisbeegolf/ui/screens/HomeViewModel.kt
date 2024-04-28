@@ -24,7 +24,7 @@ sealed interface DiskitUiState {
 }
 
 
-class DiskitViewModel(private val courseInfoRepository: CourseInfoRepository) : ViewModel() {
+class HomeViewModel(private val courseInfoRepository: CourseInfoRepository) : ViewModel() {
     // Create MutableState class with a default of the Loading state defined above
     // A MutableState class is a single value holder whose reads/writes are observed by compose
     var diskitUiState: DiskitUiState by mutableStateOf(DiskitUiState.Loading)
@@ -51,8 +51,8 @@ class DiskitViewModel(private val courseInfoRepository: CourseInfoRepository) : 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as CourseInfoApplication)
-                val courseInfoRepository = application.container.courseInfoRepository
-                DiskitViewModel(courseInfoRepository = courseInfoRepository)
+                val repository = application.container.courseInfoRepository
+                HomeViewModel(courseInfoRepository = repository)
             }
         }
     }
