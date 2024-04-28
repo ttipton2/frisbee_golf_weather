@@ -5,9 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CourseInfo (
-    val name: String,
-    val address: String,
-    val city: String,
-    val state: String,
-    val zip: Int
+    val Id: String,
+    val Name: String,
+    val Address: String,
+    val City: String,
+    val State: String,
+    val ZipCode: Int,
+    val Status: Int? = null
 )
