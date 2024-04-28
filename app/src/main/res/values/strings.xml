@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FrisbeeGolf</string>
+    <string name="loading_failed_message">Failed to load</string>
+    <string name="loading_message">Loading disc golf courses...</string>
+    <string name="back_button">Back button</string>
+    <string name="course">Course</string>
+</resources>
