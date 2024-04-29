@@ -30,8 +30,9 @@ TO RUN THE APP:
 First, clone the Diskit server from the repo linked above, build the docker image, and then run it (a more in-depth walkthrough is provided in the Diskit
 server repo README. Also, the server must be run locally, but building and running the server as described in the README should automatically ensure this). 
 After building the docker image for the server, be sure to initialize the data in Mongo by running add-courses/initialize-db.py from the 
-project root directory (should be diskit-server if cloned from GitHub). Build the app and make sure your Android phone or emulator of choice is running. 
-The app can be ran by executing from the project root directory:
+project root directory (should be diskit-server if cloned from GitHub). Finally, to run this Android app, you may either drag the .apk file 
+into your Android emulator of choice to automically install it that way, or you may open the project in Android Studio and make sure your emulator 
+is running before then executing the following file from the project root directory:
 
 app/src/main/java/com/example/frisbeegolf/MainActivity.kt
 
