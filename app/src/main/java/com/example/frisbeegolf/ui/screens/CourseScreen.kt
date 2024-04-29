@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -20,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.example.frisbeegolf.R
 import com.example.frisbeegolf.data.CourseUiState
 import com.example.frisbeegolf.model.Statuses
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
@@ -44,17 +47,27 @@ fun CourseScreen(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(4.dp)
     ) {
-        Column() {
-
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+            modifier = modifier.fillMaxWidth(0.5f)
+        ) {
+            Text("WEATHER DATA HERE")
         }
-        Column() {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.End
+        ) {
             when (courseViewModel.courseStatusUiState) {
                 is CourseStatusUiState.Loading -> Text("Loading statuses")
                 is CourseStatusUiState.Success -> {
-                    Text("How crowded?: ${(courseViewModel.courseStatusUiState as CourseStatusUiState.Success).courseStatuses.crowded}")
-                    Text("How empty?: ${(courseViewModel.courseStatusUiState as CourseStatusUiState.Success).courseStatuses.empty}")
-                    Text("How rainy?: ${(courseViewModel.courseStatusUiState as CourseStatusUiState.Success).courseStatuses.rain}")
-                    Text("How windy?: ${(courseViewModel.courseStatusUiState as CourseStatusUiState.Success).courseStatuses.wind}")
+                    UpdateStatuses((courseViewModel.courseStatusUiState as CourseStatusUiState.Success).courseStatuses)
+                    LaunchedEffect(courseViewModel.courseStatusUiState) {
+                        while(true) {
+                            delay(5.seconds)
+                            courseViewModel.getCourseStatuses(courseInfo.selectedCourse?.Id)
+                        }
+                    }
                 }
                 is CourseStatusUiState.Error -> Text("Could not load statuses")
             }
@@ -112,6 +125,9 @@ fun CourseScreen(
 }
 
 @Composable
-fun StatusScreen(courseStatuses: Statuses) {
-
+private fun UpdateStatuses(courseStatuses: Statuses) {
+    Text("How crowded?: ${courseStatuses.crowded}")
+    Text("How empty?: ${courseStatuses.empty}")
+    Text("How rainy?: ${courseStatuses.rain}")
+    Text("How windy?: ${courseStatuses.wind}")
 }
