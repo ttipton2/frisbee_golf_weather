@@ -1,6 +1,8 @@
 # frisbee_golf_weather
 Group project for CS455 Intro to Networks. An android app that gives weather conditions for local disk golf courses.
 
+Members: Travis Peterson, Lukas Renschler, Tim Tipton
+
 
 WHAT THE APP DOES:
 
