@@ -1,15 +1,13 @@
 package com.example.frisbeegolf.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import com.example.frisbeegolf.R
 import com.example.frisbeegolf.ui.screens.HomeScreen
 import com.example.frisbeegolf.ui.screens.HomeViewModel
@@ -36,6 +36,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frisbeegolf.ui.screens.CourseScreen
 import com.example.frisbeegolf.ui.screens.CourseViewModel
+import androidx.navigation.navArgument
+import com.example.frisbeegolf.network.RetrofitClient
+import com.example.frisbeegolf.network.WeatherService
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +46,11 @@ import com.example.frisbeegolf.ui.screens.CourseViewModel
 fun DiskitApp(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     courseViewModel: CourseViewModel = viewModel(),
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    weatherService: WeatherService = RetrofitClient.weatherService,
+    apiKey: String = RetrofitClient.apiKey,
+    contentPadding: PaddingValues = PaddingValues(all = 16.dp),
+    modifier: Modifier = Modifier.fillMaxSize()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currScreen = DiskitScreen.valueOf(
@@ -77,16 +84,27 @@ fun DiskitApp(
                 composable(route = DiskitScreen.Home.name) {
                     HomeScreen(
                         uiState = homeViewModel.diskitUiState,
-                        onCourseSelection = {
-                            courseViewModel.setCourse(it)
-                            navController.navigate(DiskitScreen.Course.name) },
-                        modifier = Modifier.fillMaxSize()
+                        onCourseSelection = { courseInfo ->
+                            courseViewModel.setCourse(courseInfo)
+                            navController.navigate("course/${courseInfo.City}")
+                        },
+                        weatherService = RetrofitClient.weatherService,
+                        apiKey = RetrofitClient.apiKey,
+                        contentPadding = PaddingValues(all = 16.dp),
+                        modifier = Modifier.fillMaxSize(0F)
                     )
                 }
 
-                composable(route = DiskitScreen.Course.name) {
+                composable(
+                    "course/{cityName}",
+                    arguments = listOf(navArgument("cityName") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val cityName = backStackEntry.arguments?.getString("cityName") ?: "Unknown"
+                    val weatherApiKey = "99086a1b6fa339cd9ee259e9bf60c8f7"
                     CourseScreen(
-                        courseUiState,
+                        courseInfo = courseViewModel.courseUiState.collectAsState().value,
+                        cityName = cityName,
+                        weatherApiKey = weatherApiKey,  // Passed securely
                         modifier = Modifier.fillMaxHeight()
                     )
                 }
@@ -95,12 +113,10 @@ fun DiskitApp(
     }
 }
 
-
 enum class DiskitScreen(@StringRes val title: Int) {
     Home(title = R.string.app_name),
     Course(title = R.string.course)
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,8 +133,8 @@ fun DiskitTopAppBar(
             Text(
                 text = stringResource(currScreen.title),
                 style = MaterialTheme.typography.headlineMedium,
-                )
-            },
+            )
+        },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {

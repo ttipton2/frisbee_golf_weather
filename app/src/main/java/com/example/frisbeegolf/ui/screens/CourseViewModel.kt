@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 
 class CourseViewModel : ViewModel() {
     private val _courseUiState = MutableStateFlow(CourseUiState())
-    var courseUiState: StateFlow<CourseUiState> = _courseUiState.asStateFlow()
+    val courseUiState: StateFlow<CourseUiState> = _courseUiState.asStateFlow()
 
     fun setCourse(courseToSelect: CourseInfo) {
         _courseUiState.update { currentState ->
