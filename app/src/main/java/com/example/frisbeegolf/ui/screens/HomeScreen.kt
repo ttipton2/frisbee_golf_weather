@@ -22,15 +22,15 @@ import com.example.frisbeegolf.model.CourseInfo
 
 @Composable
 fun HomeScreen(
-    uiState: DiskitUiState,
+    diskitUiState: DiskitUiState,
     onCourseSelection: (CourseInfo) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(16.dp),
     modifier: Modifier = Modifier,
 ) {
-    when (uiState) {
+    when (diskitUiState) {
         is DiskitUiState.Loading -> LoadingScreen(modifier.fillMaxSize())
         is DiskitUiState.Success -> CoursesListScreen(
-            uiState.courses,
+            diskitUiState.courses,
             onCourseSelection = onCourseSelection,
             contentPadding = contentPadding,
             modifier = modifier.fillMaxWidth()

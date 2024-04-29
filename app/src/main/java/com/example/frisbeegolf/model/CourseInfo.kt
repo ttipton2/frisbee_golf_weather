@@ -4,6 +4,15 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
+data class Statuses (
+    val crowded: Int,
+    val empty: Int,
+    val rain: Int,
+    val wind: Int
+)
+
+
+@Serializable
 data class CourseInfo (
     val Id: String,
     val Name: String,
@@ -11,5 +20,5 @@ data class CourseInfo (
     val City: String,
     val State: String,
     val ZipCode: Int,
-    val Status: Int? = null
+    val Status: Statuses
 )

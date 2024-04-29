@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,7 +39,7 @@ import com.example.frisbeegolf.ui.screens.CourseViewModel
 @Composable
 fun DiskitApp(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    courseViewModel: CourseViewModel = viewModel(),
+    courseViewModel: CourseViewModel = viewModel(factory = CourseViewModel.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -76,7 +73,7 @@ fun DiskitApp(
             ) {
                 composable(route = DiskitScreen.Home.name) {
                     HomeScreen(
-                        uiState = homeViewModel.diskitUiState,
+                        diskitUiState = homeViewModel.diskitUiState,
                         onCourseSelection = {
                             courseViewModel.setCourse(it)
                             navController.navigate(DiskitScreen.Course.name) },
@@ -87,6 +84,7 @@ fun DiskitApp(
                 composable(route = DiskitScreen.Course.name) {
                     CourseScreen(
                         courseUiState,
+                        courseViewModel,
                         modifier = Modifier.fillMaxHeight()
                     )
                 }
