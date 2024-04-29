@@ -4,4 +4,8 @@
     <string name="loading_message">Loading disc golf courses...</string>
     <string name="back_button">Back button</string>
     <string name="course">Course</string>
+    <string name="crowded">Crowded!</string>
+    <string name="empty">Good time to go!</string>
+    <string name="rain">Rainy!</string>
+    <string name="wind">Windy!</string>
 </resources>
